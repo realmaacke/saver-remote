@@ -17,6 +17,15 @@ export interface challengeKeyParams extends ParamsDictionary {
     user: string
 };
 
+export interface challengeKeyBody {
+    json: string
+}
+
+export interface challengePayload {
+    message: string,
+    signature: string
+}
+
 // push_to_repository function
 // export interface pushRepoParams extends ParamsDictionary{
 //     user: string,

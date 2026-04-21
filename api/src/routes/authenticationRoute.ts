@@ -22,7 +22,8 @@ router.post<invokeKeyParams>(
 );
 
 router.post<challengeKeyParams>(
-    "/challenge",
+    "/user/:user/challenge",
+    upload.any(),
     challengeKeyController
 );
 
