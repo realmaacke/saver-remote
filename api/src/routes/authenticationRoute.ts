@@ -1,20 +1,29 @@
 "use strict";
-
 import { Router } from "express";
-import type { Request, Response } from "express";
+import multer from "multer";
+
+import type {
+    challengeKeyParams,
+    invokeKeyParams
+} from "../models/authData.js";
 
 import {
-    authenticateUser,
-    signKey,
-    revokeKey
+    challengeKeyController,
+    invokeKeyController
 } from "../controllers/authenticationController.js";
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.get("/auth", (_: Request, res: Response) => {
-    res.status(200).json({paths: ["/login", "/invoke_key", "/revoke_key"]})
-});
+router.post<invokeKeyParams>(
+    "/user/:user/invoke_key",
+    upload.any(),
+    invokeKeyController
+);
 
-router.get("/auth/login", authenticateUser);
-router.get("/auth/invoke_key", signKey);
-router.get("/auth/revoke_key", revokeKey)
+router.post<challengeKeyParams>(
+    "/challenge",
+    challengeKeyController
+);
+
+export default router;

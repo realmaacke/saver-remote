@@ -1,29 +1,58 @@
 "use strict";
-import type { Request, Response } from "express";
+import path from "path";
+import fs from "fs";
 
-export const authenticateUser = (req: Request, res: Response) => {
-    // Take key + username
-    // Check if key in database is valid to the key that is sent in
-    
-    // TODO:: RESEARCH ABOUT "JWT" like features
-    
-    // if success -> 200
-    // No middleware required?
+import { safeSegment } from "../utils.js";
 
+import type { Request } from "express";
 
-    // Need of a limiter here especialy
+import type { RequestHandler } from "express";
+import type { invokeKeyParams, invokeKeyType } from "../models/authData.js";
 
-    // model authDetails will be used for this, either incoming or outbound or both.
+// Yet another ugly function since express is stupid. (asserts to cast it to the type)
+function assertFileType(file: any): asserts file is invokeKeyType {
+  if (
+    !file ||
+    typeof file.fieldname !== "string" ||
+    typeof file.originalname !== "string" ||
+    typeof file.encoding !== "string" ||
+    typeof file.mimetype !== "string" ||
+    !Buffer.isBuffer(file.buffer)
+  ) {
+    throw new Error("Invalid file format");
+  }
 }
 
-export const signKey = (req: Request, res: Response) => {
-    // Add key in database to user.
-    // Return 200 if success
-    // Attach middleware
+function hasFiles(req: Request): req is Request & { files: Express.Multer.File[] } {
+    return Array.isArray(req.files);
 }
 
-export const revokeKey = (req: Request, res: Response) => {
-    // Grab the key in database and delete it.
-    // Return 200 if success
-    // Attatch middleware
+export const invokeKeyController: RequestHandler<
+    invokeKeyParams,
+    any,
+    any
+> = (req, res) => {
+    if (!hasFiles(req) || req.files.length === 0) {
+        return res.status(400).json({ ok: false, error: "No files uploaded"});
+    }
+    const user = safeSegment(req.params.user);
+
+    try {
+        assertFileType(req.files[0]);
+        const file: invokeKeyType = req.files[0];
+        
+        const projectRoot = path.resolve("storage", user, "keys");
+        const targetPath = path.join(projectRoot, file.originalname);
+
+        fs.mkdirSync(path.dirname(targetPath), {recursive: true});
+        fs.writeFileSync(targetPath, file.buffer);
+    } catch (error) {
+        console.error("authenticationController: (invokeKeyController) Error: ", error);
+        return res.status(400).json({ ok: false, error: error});
+    }
+    return res.status(200).json({ ok: true, error: null});
+}
+
+export const challengeKeyController = () => {
+
 }

@@ -3,3 +3,7 @@
 
 api/node_modules
 saver-server/node_modules
+
+api/storage/*
+
+saver-server/
