@@ -1,0 +1,6 @@
+1. Save all the paths.
+2. somehow grab the content of all the paths
+
+
+ make clean && make
+./build/saver add .
