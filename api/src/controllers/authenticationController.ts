@@ -87,6 +87,8 @@ export const challengeKeyController: RequestHandler<
     const user: string = req.params.user;
     const body: challengeKeyBody = req.body;
 
+    console.log(`user: ${user} is challenging key`);
+
     if (!body.json || typeof body.json !== "string") {
         throw new Error("Undefined json");
     }

@@ -1,6 +1,6 @@
 
 services:
-  saverDatabase:
+  saverdatabase:
     image: mariadb:11
     container_name: saver_db
     restart: always
@@ -9,19 +9,17 @@ services:
       MYSQL_DATABASE: ${mysql_database}
       MYSQL_USER: ${mysql_user}
       MYSQL_PASSWORD: ${mysql_password}
-    ports:
-      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - saver_db_data:/var/lib/mysql
     networks:
       - saver_network
 
-  saverApi:
+  saverapi:
     build: ./api
     container_name: saver_api
     restart: always
     depends_on:
-      - saverDatabase
+      - saverdatabase
     environment:
       DB_HOST: ${db_host}
       DB_USER: ${db_user}
@@ -29,24 +27,24 @@ services:
       DB_NAME: saver_db
       DB_PORT: ${DB_PORT}
     ports:
-      - "3000:3000"
+      - "${API_PORT}:${API_PORT}"
     networks:
       - saver_network
 
-  saverWeb:
+  saverweb:
     build: ./web
     container_name: saver_web
     restart: always
     depends_on:
-      - saverApi
+      - saverapi
     ports:
       - "8080:80"
     networks:
       - saver_network
 
 networks:
-	saver_network:
-		driver: bridge
+  saver_network:
+    driver: bridge
 
 volumes:
   saver_db_data:

@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
 ENV NODE_ENV=production
 
 CMD ["node", "dist/app.js"]
