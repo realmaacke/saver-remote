@@ -9,7 +9,8 @@ import type {
 
 import {
     challengeKeyController,
-    invokeKeyController
+    invokeKeyController,
+    loginController
 } from "../controllers/authenticationController.js";
 
 const router = Router();
@@ -26,5 +27,10 @@ router.post<challengeKeyParams>(
     upload.any(),
     challengeKeyController
 );
+
+router.post(
+    "/login",
+    loginController
+)
 
 export default router;

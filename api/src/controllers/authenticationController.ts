@@ -3,20 +3,25 @@ import path from "path";
 import fs from "fs";
 
 import crypto from "crypto";
-
 import SshPK from "sshpk";
+
+import * as argon2 from "argon2";
+
+import type { RequestHandler, Request } from "express";
+import type { Params, ParamsDictionary } from "express-serve-static-core";
+
 
 import { safeSegment } from "../utils.js";
 
-import type { Request } from "express";
+import { db } from "../database.js";
 
-import type { RequestHandler } from "express";
 import type {
     invokeKeyParams,
     invokeKeyType,
     challengeKeyParams,
     challengeKeyBody,
-    challengePayload
+    challengePayload,
+    loginBody
 } from "../models/authData.js";
 
 // Yet another ugly function since express is stupid. (asserts to cast it to the type)
@@ -121,4 +126,53 @@ export const challengeKeyController: RequestHandler<
         ok: true,
         error: null
     });
-}
+};
+
+export const loginController: RequestHandler<
+    ParamsDictionary, any, loginBody
+> =  async (req, res) => {
+    const username = req.body.username.trim();
+    const password = req.body.password.trim();
+
+    const storedPassword = await db.select('users', ['password'], 'username = ?', [username]);
+
+    const correctCredentials: boolean = await argon2.verify(storedPassword, password);
+
+    if (!correctCredentials) {
+        res.status(401).json({
+            ok: false,
+            error: 'Invalud credentials'
+        });
+    }
+
+    res.status(200).json({ ok: true, error: null });
+};
+
+export const registerController: RequestHandler<
+    ParamsDictionary, any, loginBody
+> = async (req, res) => {
+    const username = req.body.username.trim();
+    const password = req.body.password.trim();
+
+    const hashedPassword = await argon2.hash(password);
+
+    const takenCredentials = await db.select('users', ['*'], 'username = ?', [username]);
+
+    // Update the http codes.
+    if(takenCredentials) {
+        return res.status(402).json({
+            ok: false,
+            error: 'username already taken'
+        });
+    }
+
+    if (await db.insert('user', {
+        'username': username,
+        'password': hashedPassword
+    })) {
+        return res.status(200).json({
+            ok: true,
+            error: null
+        });
+    }
+};
