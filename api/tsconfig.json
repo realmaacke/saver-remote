@@ -3,19 +3,20 @@
     /* File Layout */
     "rootDir": "./src",
     "outDir": "./dist",
-
     /* ESM Setup */
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "types": ["node"],
-
+    "lib": [
+      "ES2022"
+    ],
+    "types": [
+      "node"
+    ],
     /* Output */
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-
     /* Strictness */
     "strict": true,
     "noImplicitAny": true,
@@ -24,20 +25,22 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-
     /* Clean code */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitOverride": true,
-
     /* ESM quirks */
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-
     /* Safety */
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": false
+    "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

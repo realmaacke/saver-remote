@@ -4,11 +4,11 @@ import 'dotenv';
 import * as mariadb from "mariadb";
 
 const pool: mariadb.Pool = mariadb.createPool({
-    host: process.env.db_host || "localhost",
-    port: process.env.DB_PORT || 3306,
-    user: process.env.db_user || "user",
-    password:process.env.db_password || "invalid-password",
-    database: process.env.mysql_database || "saver_db",
+    host: process.env.DB_HOST || "saverdatabase",
+    port: Number(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER || "saver_regular_user",
+    password: process.env.DB_PASSWORD || "saverPassword1",
+    database: process.env.DB_NAME || "saver_db",
     connectionLimit: 20,
     bigIntAsNumber: true
 });
@@ -26,7 +26,7 @@ export const db = {
             const result = await conn.query(sql, params);
 
             return result;
-        } catch(error) {
+        } catch (error) {
             console.error("Could not query to database");
             throw error;
         } finally {
@@ -34,10 +34,10 @@ export const db = {
         }
     },
 
-    select: async function select(table: string, columns: string[] = ['*'], where: string = '', params: any[] = [], limit: number|null = null, offset: number|null = null) {
+    select: async function select(table: string, columns: string[] = ['*'], where: string = '', params: any[] = [], limit: number | null = null, offset: number | null = null) {
         let sql =
-        `SELECT ${Array.isArray(columns) ? columns.join(', ') : columns} FROM ${table}` +
-        (where ? ` WHERE ${where}` : '');
+            `SELECT ${Array.isArray(columns) ? columns.join(', ') : columns} FROM ${table}` +
+            (where ? ` WHERE ${where}` : '');
 
         if (limit != null) {
             sql += ` LIMIT ${limit}`;

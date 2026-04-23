@@ -8,7 +8,7 @@ import SshPK from "sshpk";
 import * as argon2 from "argon2";
 
 import type { RequestHandler, Request } from "express";
-import type { Params, ParamsDictionary } from "express-serve-static-core";
+import type { ParamsDictionary } from "express-serve-static-core";
 
 
 import { safeSegment } from "../utils.js";
@@ -26,16 +26,16 @@ import type {
 
 // Yet another ugly function since express is stupid. (asserts to cast it to the type)
 function assertFileType(file: any): asserts file is invokeKeyType {
-  if (
-    !file ||
-    typeof file.fieldname !== "string" ||
-    typeof file.originalname !== "string" ||
-    typeof file.encoding !== "string" ||
-    typeof file.mimetype !== "string" ||
-    !Buffer.isBuffer(file.buffer)
-  ) {
-    throw new Error("Invalid file format");
-  }
+    if (
+        !file ||
+        typeof file.fieldname !== "string" ||
+        typeof file.originalname !== "string" ||
+        typeof file.encoding !== "string" ||
+        typeof file.mimetype !== "string" ||
+        !Buffer.isBuffer(file.buffer)
+    ) {
+        throw new Error("Invalid file format");
+    }
 }
 
 function hasFiles(req: Request): req is Request & { files: Express.Multer.File[] } {
@@ -45,7 +45,7 @@ function hasFiles(req: Request): req is Request & { files: Express.Multer.File[]
 function challengeKey(publicKey: any, message: any, signatureBase64: any) {
     try {
         const signature = Buffer.from(signatureBase64, "base64");
-        return crypto.verify("sha256", Buffer.from(message, "utf8"), { key: publicKey, format: "pem"}, signature);
+        return crypto.verify("sha256", Buffer.from(message, "utf8"), { key: publicKey, format: "pem" }, signature);
 
     } catch (error) {
         console.error(`Could not challenge key, error: `, error);
@@ -64,24 +64,24 @@ export const invokeKeyController: RequestHandler<
     any
 > = (req, res) => {
     if (!hasFiles(req) || req.files.length === 0) {
-        return res.status(400).json({ ok: false, error: "No files uploaded"});
+        return res.status(400).json({ ok: false, error: "No files uploaded" });
     }
     const user = safeSegment(req.params.user);
 
     try {
         assertFileType(req.files[0]);
         const file: invokeKeyType = req.files[0];
-        
+
         const projectRoot = path.resolve("storage", user, "keys");
         const targetPath = path.join(projectRoot, file.originalname);
 
-        fs.mkdirSync(path.dirname(targetPath), {recursive: true});
+        fs.mkdirSync(path.dirname(targetPath), { recursive: true });
         fs.writeFileSync(targetPath, convertRsaToPEM(file.buffer));
     } catch (error) {
         console.error("authenticationController: (invokeKeyController) Error: ", error);
-        return res.status(400).json({ ok: false, error: error});
+        return res.status(400).json({ ok: false, error: error });
     }
-    return res.status(200).json({ ok: true, error: null});
+    return res.status(200).json({ ok: true, error: null });
 }
 
 export const challengeKeyController: RequestHandler<
@@ -104,14 +104,14 @@ export const challengeKeyController: RequestHandler<
         throw new Error("json is invalid");
     }
 
-    const keyFolder: string  = path.resolve("storage", user, "keys");
-    
+    const keyFolder: string = path.resolve("storage", user, "keys");
+
     const allKeys: string[] = fs.readdirSync(keyFolder);
 
     let validKey = false;
     for (const keyFile of allKeys) {
-        let fileContent = fs.readFileSync((keyFolder + "/" + keyFile), {encoding: 'utf8'}).trim();
-        
+        let fileContent = fs.readFileSync((keyFolder + "/" + keyFile), { encoding: 'utf8' }).trim();
+
         if (challengeKey(fileContent, jsonBody.message, jsonBody.signature)) {
             validKey = true;
             break;
@@ -119,7 +119,7 @@ export const challengeKeyController: RequestHandler<
     }
 
     if (!validKey) {
-        return res.status(401).json({ok: false, error: "could not match keys"})
+        return res.status(401).json({ ok: false, error: "could not match keys" })
     }
 
     return res.status(200).json({
@@ -130,11 +130,13 @@ export const challengeKeyController: RequestHandler<
 
 export const loginController: RequestHandler<
     ParamsDictionary, any, loginBody
-> =  async (req, res) => {
+> = async (req, res) => {
     const username = req.body.username.trim();
     const password = req.body.password.trim();
 
-    const storedPassword = await db.select('users', ['password'], 'username = ?', [username]);
+    const rows = await db.select('users', ['id', 'password'], 'username = ?', [username]);
+
+    const storedPassword = rows[0].password;
 
     const correctCredentials: boolean = await argon2.verify(storedPassword, password);
 
@@ -145,7 +147,20 @@ export const loginController: RequestHandler<
         });
     }
 
-    res.status(200).json({ ok: true, error: null });
+    const session_id = crypto.randomBytes(64).toString('hex');
+
+    const expiresAt = new Date(Date.now() + 86400000)
+        .toISOString()
+        .slice(0, 19)
+        .replace('T', ' ');
+
+    await db.insert('session', {
+        session_id,
+        user_id: rows[0].id,
+        expiration_date: expiresAt
+    });
+
+    res.status(200).json({ ok: true, error: null, session_id: session_id });
 };
 
 export const registerController: RequestHandler<
@@ -158,21 +173,39 @@ export const registerController: RequestHandler<
 
     const takenCredentials = await db.select('users', ['*'], 'username = ?', [username]);
 
-    // Update the http codes.
-    if(takenCredentials) {
-        return res.status(402).json({
-            ok: false,
-            error: 'username already taken'
-        });
-    }
+    try {
+        // Update the http codes.
+        if (takenCredentials.length > 0) {
+            return res.status(402).json({
+                ok: false,
+                error: 'username already taken'
+            });
+        }
 
-    if (await db.insert('user', {
-        'username': username,
-        'password': hashedPassword
-    })) {
-        return res.status(200).json({
-            ok: true,
-            error: null
+        if (await db.insert('users', {
+            'username': username,
+            'password': hashedPassword
+        })) {
+            return res.status(200).json({
+                ok: true,
+                error: null
+            });
+        }
+
+        return res.status(401).json({
+            ok: false,
+            error: 'internal server error, could not register'
+        });
+    } catch (error) {
+        console.error("ERROR WITH REGISTER", error);
+        return res.status(500).json({
+            ok: false,
+            error: error
         });
     }
 };
+
+// Challenge session_id
+
+
+// workflox => push_to_repo -> challenge ssh -> challenge session_id -> done

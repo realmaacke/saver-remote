@@ -10,7 +10,8 @@ import type {
 import {
     challengeKeyController,
     invokeKeyController,
-    loginController
+    loginController,
+    registerController
 } from "../controllers/authenticationController.js";
 
 const router = Router();
@@ -31,6 +32,11 @@ router.post<challengeKeyParams>(
 router.post(
     "/login",
     loginController
-)
+);
+
+router.post(
+    "/register",
+    registerController
+);
 
 export default router;
