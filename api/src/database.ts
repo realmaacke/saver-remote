@@ -68,7 +68,12 @@ export const db = {
     },
 
     // Helper function for update.
-    update: async function update<T extends Record<string, unknown>>(table: string, data: T, where: string, params = []) {
+    update: async function update<T extends Record<string, unknown>>(
+        table: string,
+        data: T,
+        where: string,
+        params: unknown[] = []
+    ) {
         const setClause = Object.keys(data)
             .map((k) => `${k} = ?`)
             .join(', ');

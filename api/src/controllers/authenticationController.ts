@@ -12,7 +12,6 @@ import type { ParamsDictionary } from "express-serve-static-core";
 
 
 import { safeSegment } from "../utils.js";
-
 import { db } from "../database.js";
 
 import type {
@@ -153,13 +152,29 @@ export const loginController: RequestHandler<
     const expiresAt = new Date(Date.now() + 86400000)
         .toISOString()
         .slice(0, 19)
-        .replace('T', ' ');
+        .replace('T', ' ')
+    ;
 
-    await db.insert('session', {
-        session_id,
-        user_id: rows[0].id,
-        expiration_date: expiresAt
-    });
+    const hasSessionID = await db.select('session', ['*'], 'user_id = ?', [rows[0].id]);
+
+    if (hasSessionID[0]) {
+        await db.update(
+            'session',
+            {
+                session_id: session_id,
+                expiration_date: expiresAt
+            },
+            'user_id = ?',
+            [rows[0].id]
+        );
+    } else {
+        await db.insert('session', {
+            session_id,
+            user_id: rows[0].id,
+            expiration_date: expiresAt
+        });
+    }
+
 
     res.status(200).json({ ok: true, error: null, session_id: session_id });
 };
