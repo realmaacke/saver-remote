@@ -9,6 +9,7 @@ import type {
 
 import {
     challengeKeyController,
+    challengeSessionController,
     invokeKeyController,
     loginController,
     registerController
@@ -38,5 +39,10 @@ router.post(
     "/register",
     registerController
 );
+
+router.get(
+    '/challenge_session/:username/:session_id',
+    challengeSessionController
+)
 
 export default router;

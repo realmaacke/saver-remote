@@ -21,7 +21,8 @@ import type {
     challengeKeyParams,
     challengeKeyBody,
     challengePayload,
-    loginBody
+    loginBody,
+    sessionChallengeParams
 } from "../models/authData.js";
 
 // Yet another ugly function since express is stupid. (asserts to cast it to the type)
@@ -205,7 +206,51 @@ export const registerController: RequestHandler<
     }
 };
 
-// Challenge session_id
+export const challengeSessionController: RequestHandler<
+    sessionChallengeParams, any, any
+> = async (req, res) => {
+    const client_session_id = req.params.session_id || "";
+    const username = req.params.username || "";
+
+    if (!client_session_id) {
+        return res.status(401).json({
+            ok: false,
+            error: 'no session id provided'
+        });
+    }
+    
+    if (!username) {
+        return res.status(401).json({
+            ok: false,
+            error: 'no username provided'
+        });
+    }
+
+    const user_id = await db.select('users', ['id'], 'username = ?', [username]);
+
+    console.log(user_id[0]);
+
+    if (!user_id[0].id) {
+        return res.status(401).json({
+            ok: false,
+            error: 'no session found'
+        });
+    }
+
+    const actutal_session_id = await db.select('session', ['session_id'], 'user_id = ?', [user_id]);
+
+    if (actutal_session_id != client_session_id) {
+        return res.status(401).json({
+            ok: false,
+            error: 'session ids does not match, try logging in again'
+        });
+    }
+    
+    return res.status(200).json({
+        ok: true,
+        error: null
+    });
+}
 
 
 // workflox => push_to_repo -> challenge ssh -> challenge session_id -> done

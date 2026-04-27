@@ -34,7 +34,14 @@ export const db = {
         }
     },
 
-    select: async function select(table: string, columns: string[] = ['*'], where: string = '', params: any[] = [], limit: number | null = null, offset: number | null = null) {
+    select: async function select(
+        table: string,
+        columns: string[] = ['*'],
+        where: string = '',
+        params: any[] = [],
+        limit: number | null = null,
+        offset: number | null = null
+    ) {
         let sql =
             `SELECT ${Array.isArray(columns) ? columns.join(', ') : columns} FROM ${table}` +
             (where ? ` WHERE ${where}` : '');

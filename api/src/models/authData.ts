@@ -31,6 +31,13 @@ export interface challengePayload {
     signature: string
 }
 
+export interface sessionChallengeParams extends ParamsDictionary {
+    username: string,
+    session_id: string
+}
+
+
+
 // push_to_repository function
 // export interface pushRepoParams extends ParamsDictionary{
 //     user: string,
