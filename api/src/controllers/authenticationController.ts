@@ -153,7 +153,7 @@ export const loginController: RequestHandler<
         .toISOString()
         .slice(0, 19)
         .replace('T', ' ')
-    ;
+        ;
 
     const hasSessionID = await db.select('session', ['*'], 'user_id = ?', [rows[0].id]);
 
@@ -174,7 +174,6 @@ export const loginController: RequestHandler<
             expiration_date: expiresAt
         });
     }
-
 
     res.status(200).json({ ok: true, error: null, session_id: session_id });
 };
@@ -233,7 +232,7 @@ export const challengeSessionController: RequestHandler<
             error: 'no session id provided'
         });
     }
-    
+
     if (!username) {
         return res.status(401).json({
             ok: false,
@@ -260,7 +259,7 @@ export const challengeSessionController: RequestHandler<
             error: 'session ids does not match, try logging in again'
         });
     }
-    
+
     return res.status(200).json({
         ok: true,
         error: null

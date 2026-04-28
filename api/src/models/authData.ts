@@ -3,7 +3,8 @@ import type { ParamsDictionary } from "express-serve-static-core";
 
 export interface loginBody {
     username: string,
-    password: string
+    password: string,
+    json: any
 };
 
 export interface invokeKeyParams extends ParamsDictionary {

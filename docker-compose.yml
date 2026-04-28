@@ -13,6 +13,7 @@ services:
       - "3306:3306"
     volumes:
       - saver_db_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d # entry for empty volume
     networks:
       - saver_network
 
