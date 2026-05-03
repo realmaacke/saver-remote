@@ -1,0 +1,68 @@
+.repo-header-branch {
+    position: relative;
+    display: inline-block;
+}
+
+/* The button */
+.repo-header-branch-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 0.5rem 1rem;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+
+/* Dropdown container */
+.repo-header-branch-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+
+    min-width: 200px;
+    max-height: 260px;
+    overflow-y: auto;
+
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+
+    z-index: 1000;
+
+    padding: 4px 0;
+}
+
+/* Each item */
+.repo-header-branch-item {
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: white;
+
+    cursor: pointer;
+}
+
+.repo-header-branch-item:hover {
+    background: var(--accent-bg);
+}
+
+/* Active branch */
+.repo-header-branch-item.active {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* Optional: keyboard focus */
+.repo-header-branch-item:focus {
+    outline: none;
+    background: var(--accent-bg);
+}

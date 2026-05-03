@@ -1,24 +1,25 @@
 import {
-  Button,
-  Container,
-  Box,
-} from '@mui/material';
+	TwoSplitContainer,
+} from "./components/containers/Containers"
+import { Repository } from "./components/repository/Repository";
 
-import Navbar from './components/NavBar';
-import Repository from './components/Repository/Repository';
+import "./components/base.css";
+
+import "normalize.css";
 
 function App() {
-  return (
-    <>
-    <Box sx={{ width: '100%' }}>
-
-      <Navbar/>
-
-      <Repository/>
-    </Box>
-
-    </>
-  )
+	return (
+		<>
+			<TwoSplitContainer>
+				<main className="main">
+					<Repository />
+				</main>
+				<aside className="aside">
+					<h1>Aside</h1>
+				</aside>
+			</TwoSplitContainer>
+		</>
+	)
 }
 
 export default App

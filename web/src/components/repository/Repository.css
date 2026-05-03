@@ -1,0 +1,9 @@
+.repo-body {
+    min-height: 500px;
+    border-bottom: 2px solid var(--accent-border);
+
+}
+
+.repo-footer {
+    min-height: 100px;
+}
