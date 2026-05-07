@@ -5,7 +5,7 @@ import multer from "multer";
 import {
     push_to_repository
 } from "../controllers/repositoryController.js";
-import type {pushRepoParams } from "../models/repoData.js";
+import type { pushRepoParams } from "../models/repoData.js";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
