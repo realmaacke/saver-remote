@@ -1,6 +1,5 @@
 "use strict";
 import { Router } from "express";
-import { success, z } from "zod";
 import authResponse from "../dto/authResponse";
 
 // DTO
@@ -13,11 +12,9 @@ const router = Router();
 
 // Used to renew token.
 router.get("/renew", (req, res) => {
-    console.log("Some user is trying to renew");
     const authHeader = req.get("Authorization");
 
     if (!authHeader?.startsWith("Bearer ")) {
-        console.log("Auth header is wrong");
         return res.status(401).json(authResponse(
             null,
             false,
@@ -30,7 +27,6 @@ router.get("/renew", (req, res) => {
 
 // Login => token
 router.post("/connect", (req, res) => {
-    console.log(req.body);
     const result = loginDTO.safeParse(req.body);
     if (!result.success) {
         return res.status(400).json(authResponse(

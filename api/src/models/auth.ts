@@ -1,8 +1,11 @@
 "use strict";
 import jwt from "jsonwebtoken";
 import authResponse from "../dto/authResponse";
+
+// Super super temporary
 const SECRET = "hide-me";
 
+// Super temporary, until i choose what db i want.
 const tempDB = [
     {
         userId: 0,
@@ -18,8 +21,6 @@ const tempDB = [
 ];
 
 export const Auth = {
-
-
     issue_token(user_id: number) {
         try {
             const token = jwt.sign(
@@ -59,7 +60,6 @@ export const Auth = {
         return this.issue_token(decoded.userId);
     },
 
-    // Super temporary, until i choose what db i want.
     login_user(username: string, hashedPassword: string) {
 
         let isCorrect: boolean = false;
