@@ -1,5 +1,5 @@
 "use strict";
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import authResponse from "../dto/authResponse";
 
 // DTO
@@ -11,7 +11,7 @@ import { Auth } from "../models/auth";
 const router = Router();
 
 // Used to renew token.
-router.get("/renew", (req, res) => {
+router.get("/renew", (req : Request, res: Response) => {
     const authHeader = req.get("Authorization");
 
     if (!authHeader?.startsWith("Bearer ")) {
@@ -26,7 +26,7 @@ router.get("/renew", (req, res) => {
 });
 
 // Login => token
-router.post("/connect", (req, res) => {
+router.post("/connect", (req: Request, res: Response) => {
     const result = loginDTO.safeParse(req.body);
     if (!result.success) {
         return res.status(400).json(authResponse(

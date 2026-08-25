@@ -5,9 +5,11 @@ const port = 8080;
 
 // Routers
 import authenticate from "./routes/authenticate";
+import project from "./routes/project";
 
 app.use(express.json());
 app.use("/auth", authenticate);
+app.use("/project", project);
 
 
 app.listen(port, function() {
