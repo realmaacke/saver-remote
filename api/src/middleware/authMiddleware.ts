@@ -14,7 +14,7 @@ export function authenticate(
         });
     }
 
-    if (!Auth.verify_token(authHeader)) {
+    if (!Auth.verify_token(authHeader).success) {
         return res.status(401).json({
             error: "Unauthorized"
         });
