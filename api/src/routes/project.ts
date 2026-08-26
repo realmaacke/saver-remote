@@ -63,7 +63,7 @@ router.post(
  * This route add/alter files to an existing project.
 */
 router.post(
-    '/:username/:project_name',
+    'add/:username/:project_name',
     authenticate, validateParams(getProjectDTO),
     (req: Request, res: Response) => {
 

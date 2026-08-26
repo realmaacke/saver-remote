@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION create_project(
     p_username VARCHAR(255),
     p_project_path VARCHAR(255)
 )
-RETURN TABLE (project_id INT, project_path VARCHAR)
+RETURNS TABLE (project_id INT, project_path VARCHAR)
 LANGUAGE plpgsql AS $$
 DECLARE
     v_user_id INT;
@@ -30,7 +30,7 @@ BEGIN
 
     -- Inserts user + project into shared table
     INSERT INTO users_to_projects (user_id, project_id)
-    VALUES (v_user_id, v_project_id)
+    VALUES (v_user_id, v_project_id);
 
     -- Returns project id + path.
     RETURN QUERY

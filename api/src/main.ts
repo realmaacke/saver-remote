@@ -9,7 +9,7 @@ import project from "./routes/project";
 
 app.use(express.json());
 app.use("/auth", authenticate);
-app.use("/project", project);
+app.use("/proj", project);
 
 
 app.listen(port, function() {
