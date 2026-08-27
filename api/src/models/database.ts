@@ -6,7 +6,8 @@ import { Auth } from "./auth";
 const sqlMap = {
     "getUser": "SELECT * FROM get_specific_user($1)",
     "createUser": "SELECT * FROM create_user($1, $2)",
-    "connectUser": "SELECT * FROM get_user_password($1)"
+    "connectUser": "SELECT * FROM get_user_password($1)",
+    "getUserById": "SELECT * FROM get_user_by_id($1)",
 }
 
 export interface DatabaseResponse<T = any> {
@@ -35,6 +36,16 @@ export const database = {
 
         if (rows.length === 0) {
             return this.response(false, null, "Invalid username");
+        }
+
+        return this.response(true, rows[0], "Succesfully retrived user");
+    },
+
+    async getUserById(userId: number) {
+        const { rows } = await pool.query<genericUserResponse>(sqlMap.getUserById, [userId]);
+
+        if (rows.length === 0) {
+            return this.response(false, null, "No username with that userId");
         }
 
         return this.response(true, rows[0], "Succesfully retrived user");

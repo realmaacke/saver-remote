@@ -44,4 +44,22 @@ export const Auth = {
         const decoded = verified.token as { userId: number };
         return this.issue_token(decoded.userId);
     },
+
+    get_userId(authHeader: string) {
+        const verified = this.verify_token(authHeader);
+
+        if (!verified.success || !verified.token) {
+            return {
+                userId: null,
+                success: false,
+                message: "Token is invaluid"
+            }
+        }
+        const decoded = verified.token as { userId: number};
+        return {
+            userId: decoded.userId,
+            success: true,
+            message: "UserId retrived"
+        };
+    }
 };

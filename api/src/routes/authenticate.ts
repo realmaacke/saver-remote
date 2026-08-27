@@ -1,6 +1,6 @@
 "use strict";
 import { Router, Request, Response } from "express";
-import authResponse from "../dto/authResponse";
+import authResponse, { genericResponse } from "../dto/authResponse";
 
 // DTO
 import {
@@ -8,21 +8,45 @@ import {
 } from "../dto/auth";
 import { Auth } from "../models/auth";
 import { database } from "../models/database";
+import { authenticate } from "../middleware/authMiddleware";
 
 const router = Router();
 
-// Used to renew token.
-router.get("/renew", (req : Request, res: Response) => {
-    const authHeader = req.get("Authorization");
+router.get("/getUserInfo", authenticate, async (req: Request, res: Response) => {
+    // It will never be empty since authenticate is middleware. 
+    const authHeader = req.get("Authorization") ||"";
+    const userId_res = Auth.get_userId(authHeader);
 
-    if (!authHeader?.startsWith("Bearer ")) {
-        return res.status(401).json(authResponse(
-            null,
+    if (!userId_res.success || !userId_res.userId) {
+        return res.status(400).json(genericResponse(
+            userId_res.userId,
             false,
-            "Invalid token"
+            "Could not retrive usedId"
         ));
     }
 
+    const result = await database.getUserById(userId_res.userId);
+
+    if (!result.success || !result.data) {
+        return res.status(400).json(genericResponse(
+            null,
+            false,
+            "Could not retrive userId"
+        ));
+    }
+
+    return res.status(200).json({
+        userId: result.data.user_id,
+        username: result.data.username,
+        success: result.success,
+        message: result.message
+    });
+});
+
+// Used to renew token.
+router.get("/renew", authenticate, (req : Request, res: Response) => {
+    // It will never be empty since authenticate is middleware.
+    const authHeader = req.get("Authorization") || "";
     return res.status(200).json(Auth.renew_token(authHeader));
 });
 
