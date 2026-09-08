@@ -93,7 +93,7 @@ export const database = {
             return this.response(true, {
                 user_id: user.user_id,
                 username: user.username,
-                token: token
+                token: token.token
             }, "Succesfully connected");
         }
 

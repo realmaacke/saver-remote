@@ -70,11 +70,17 @@ router.post("/connect", async (req: Request, res: Response) => {
         return res.status(400).json(authResponse(null, connectResult.success, connectResult.message));
     }
 
-    return res.status(200).json(authResponse(
+
+    
+    console.log("User connected");
+    let x = authResponse(
         connectResult.data?.token ?? null,
         connectResult.success,
         connectResult.message
-    ));
+    )
+
+    console.log(x);
+    return res.status(200).json(x);
 });
 
 router.post('/create', async  (req: Request, res: Response) => {
