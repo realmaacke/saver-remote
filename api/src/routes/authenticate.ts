@@ -48,6 +48,11 @@ router.get("/renew", authenticate, (req : Request, res: Response) => {
     // It will never be empty since authenticate is middleware.
     const authHeader = req.get("Authorization") || "";
     return res.status(200).json(Auth.renew_token(authHeader));
+
+    // TODO:: Fix auth
+    // Vulnerable to XSS right now in regards to the tokens.
+    // someone obtain a token, it will be theirs to renew
+    // FIX: 2 tokens, (refresh token, access token), (store in db)
 });
 
 // Login => token

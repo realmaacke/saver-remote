@@ -27,23 +27,24 @@ router.get(
  * Route name: init_project
  * This route will initialize a new project.
  * Params: username: string, project_name: string
- * Body: Files: ?
+ * Body: none
  */
-router.post(
-    '/:username/:project_name',
+router.get(
+    '/init/:username/:project_name',
     authenticate, validateParams(getProjectDTO),
     (req: Request, res: Response) => {
 
     const { username, project_name } = req.params;
-    const result = initProject.body.safeParse(req.body);
 
-    if (!result.success) {
-        return res.status(400).json(projectResponse(
-            false,
-            null,
-            "Body does not match the schema"
-        ));
-    }
+    console.log("INIT")
+
+    // if (!result.success) {
+    //     return res.status(400).json(projectResponse(
+    //         false,
+    //         null,
+    //         "Body does not match the schema"
+    //     ));
+    // }
 
     // check if user is actually username
 
@@ -63,7 +64,7 @@ router.post(
  * This route add/alter files to an existing project.
 */
 router.post(
-    'add/:username/:project_name',
+    '/add/:username/:project_name',
     authenticate, validateParams(getProjectDTO),
     (req: Request, res: Response) => {
 
