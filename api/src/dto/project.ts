@@ -20,3 +20,15 @@ export const initProject = {
         data: z.record(z.string(), z.unknown()).nullable()
     })
 }
+
+export const uploadProject = {
+    params: getProjectDTO,
+    body: z.object({
+        commit_hash: z.string(),
+        blobs: z.array(z.object({
+            hash: z.string(),
+            mode: z.string().nullable(),
+            content: z.string()
+        }))
+    })
+}

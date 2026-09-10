@@ -6,7 +6,7 @@ import { validateParams } from "../middleware/validationsMiddleware";
 import { authenticate } from "../middleware/authMiddleware";
 
 //DTO
-import { getProjectDTO, initProject, projectResponse } from "../dto/project";
+import { getProjectDTO, initProject, projectResponse, uploadProject } from "../dto/project";
 
 const router = Router();
 
@@ -64,11 +64,19 @@ router.get(
  * This route add/alter files to an existing project.
 */
 router.post(
-    '/add/:username/:project_name',
-    authenticate, validateParams(getProjectDTO),
+    '/upload/:username/:project_name',
+    authenticate, validateParams(uploadProject.params),
     (req: Request, res: Response) => {
-
     const { username, project_name } = req.params;
+
+    const result = uploadProject.body.safeParse(req.body);
+    
+    if (!result.success) {
+        console.log(result.error);
+        return res.status(400).json(projectResponse(false, null, "Malformed body"));
+    }
+
+    console.log(result);
 
     // check that user is = username, and has permissions?
     // sql query for userId, use Token to get userId.
