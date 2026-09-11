@@ -6,6 +6,14 @@ import { BlobObject, projectResponse } from "../dto/project";
 import { createHash } from "node:crypto";
 
 export const Storage = {
+    /**
+     * Returns path.
+     * @param username - saver user's username
+     * @param project_name - saver user's project name
+     * @param type - meant to be used for "objects", "refs"....
+     * @param other - was supposed to be for content-addressing (first two char = folder) now used for other stuff.
+     * @returns {string} path.
+     */
     get_storage_path(
         username: string,
         project_name: string,
@@ -15,6 +23,12 @@ export const Storage = {
         return `storage/${username}/${project_name}/.saver${type ? "/" + type : ""}/${other ? "/" + other : ""}`;
     },
 
+    /**
+     * Generic method for storing bytes, used in other methods.
+     * @param storage_path - where to store the file.
+     * @param filename - filename
+     * @param bytes  - content of file.
+     */
     async store_file(storage_path: string, filename:string, bytes: Buffer) {
         const storage: string = path.join(process.cwd(), storage_path);
         const file_location = path.join(storage, filename);
@@ -23,6 +37,15 @@ export const Storage = {
         await writeFile(file_location, bytes);
     },
 
+    /**
+     * 
+     * @param username  - saver user's username
+     * @param project_name - saver user's project name.
+     * @param data - BlobObject = {hash: string, mode: string | null, content: string}
+     * Content is decoded at first. (base64), if mode is null it is a folder.
+     * @param commit_hash - SHA256 string of commit.
+     * @returns ProjectResponse - { success: boolean, data: any[] | null, message: string }
+     */
     async upload_to_project(username: string, project_name: string, data: BlobObject[], commit_hash: string) {
         const base_path = this.get_storage_path(username, project_name, "objects");
 
@@ -56,13 +79,21 @@ export const Storage = {
         await mkdir(storage_path, { recursive: true});
     },
 
+    /**
+     * Method that stores and updates a chapter.
+     * This method auto makes the first chapter HEAD. (primary chapter)
+     * @param commit_hash - identifier for the commit. sha256
+     * @param chapter  - chapter name (i,e. main, master, dev)
+     * @param username  - saver user's username
+     * @param project_name - saver user's project name.
+     * @returns ProjectResponse - { success: boolean, data: any[] | null, message: string }
+     */
     async store_chapter(
         commit_hash: string,
         chapter: string,
         username: string,
         project_name: string
     ) {
-        const refs_path = this.get_storage_path(username, project_name, "refs");
         const heads_path = this.get_storage_path(username, project_name, "refs", "heads");
         const current_head = path.join(this.get_storage_path(username, project_name), "HEAD");
         const chapter_path = path.join(heads_path, chapter);
