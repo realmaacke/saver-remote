@@ -76,7 +76,7 @@ router.get(
 router.post(
     '/upload/:username/:project_name',
     authenticate, validateParams(uploadProject.params),
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
     let { username, project_name } = req.params;
 
     if (typeof username === "object") {
@@ -94,11 +94,22 @@ router.post(
         return res.status(400).json(projectResponse(false, null, "Malformed body"));
     }
 
-    const uploadState = Storage.upload_to_project(
+    const uploadState = await Storage.upload_to_project(
         username,
         project_name,
         result.data.blobs,
         result.data.commit_hash
+    );
+
+    if (!uploadState.success) {
+        return res.status(400).json(uploadState);
+    }
+
+    const chapterState = await Storage.store_chapter(
+        result.data.commit_hash,
+        result.data.chapter,
+        username,
+        project_name
     );
     // check that user is = username, and has permissions?
     // sql query for userId, use Token to get userId.

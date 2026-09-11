@@ -6,8 +6,13 @@ import { BlobObject, projectResponse } from "../dto/project";
 import { createHash } from "node:crypto";
 
 export const Storage = {
-    get_storage_path(username: string, project_name: string, other: string | null = null): string {
-        return `storage/${username}/${project_name}/objects/${other ? "/" + other : ""}`;
+    get_storage_path(
+        username: string,
+        project_name: string,
+        type: string | null = null,
+        other: string | null = null
+    ): string {
+        return `storage/${username}/${project_name}/.saver${type ? "/" + type : ""}/${other ? "/" + other : ""}`;
     },
 
     async store_file(storage_path: string, filename:string, bytes: Buffer) {
@@ -19,7 +24,7 @@ export const Storage = {
     },
 
     async upload_to_project(username: string, project_name: string, data: BlobObject[], commit_hash: string) {
-        const base_path = this.get_storage_path(username, project_name);
+        const base_path = this.get_storage_path(username, project_name, "objects");
 
         for (const blob of data) {
             let folder: string = blob.hash.substring(0, 2);
@@ -37,17 +42,43 @@ export const Storage = {
             }
 
             if (fs.existsSync(path.join(base_path, folder, fileName))) {
-                console.log(`upload_to_project(), inside for loop, check if file exists`);
-                console.log(`upload_to_project(), ${path.join(base_path, folder, fileName)}`);
                 continue;
             }
 
             this.store_file(path.join(base_path, folder), fileName, bytes);
         }
+
+        return projectResponse(true, null, "Files uploaded");
     },
 
     async create_project(username: string, project_name: string) {
         const storage_path = this.get_storage_path(username, project_name);
         await mkdir(storage_path, { recursive: true});
+    },
+
+    async store_chapter(
+        commit_hash: string,
+        chapter: string,
+        username: string,
+        project_name: string
+    ) {
+        const refs_path = this.get_storage_path(username, project_name, "refs");
+        const heads_path = this.get_storage_path(username, project_name, "refs", "heads");
+        const current_head = path.join(this.get_storage_path(username, project_name), "HEAD");
+        const chapter_path = path.join(heads_path, chapter);
+
+        await mkdir(heads_path, {recursive: true});
+
+        fs.writeFileSync(chapter_path, commit_hash, { flag: 'w'});
+
+        // check if head exists?
+        if (fs.existsSync(current_head)) {
+            return projectResponse(true, null, `Succesfully uploaded to ${project_name}`);
+        }
+
+        // Write HEAD to chapter if it does not exists.
+        fs.writeFileSync(current_head, `ref: refs/heads/${chapter}`, {flag: 'w'});
+
+        return projectResponse(true, null, `Succesfully uploaded to ${project_name}`);
     }
 }

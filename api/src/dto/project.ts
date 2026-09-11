@@ -25,6 +25,7 @@ export const uploadProject = {
     params: getProjectDTO,
     body: z.object({
         commit_hash: z.string(),
+        chapter: z.string(),
         blobs: z.array(z.object({
             hash: z.string(),
             mode: z.string().nullable(),
