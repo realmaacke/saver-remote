@@ -6,7 +6,17 @@ import { validateParams } from "../middleware/validationsMiddleware";
 import { authenticate } from "../middleware/authMiddleware";
 
 //DTO
-import { getProjectDTO, initProject, projectResponse, uploadProject } from "../dto/project";
+import {
+getProjectDTO,
+initProject,
+projectResponse,
+BlobObject,
+uploadProject
+} from "../dto/project";
+
+// Models
+import { Decoding } from "../models/decoding";
+import { Storage } from "../models/storage";
 
 const router = Router();
 
@@ -67,7 +77,15 @@ router.post(
     '/upload/:username/:project_name',
     authenticate, validateParams(uploadProject.params),
     (req: Request, res: Response) => {
-    const { username, project_name } = req.params;
+    let { username, project_name } = req.params;
+
+    if (typeof username === "object") {
+        username = username[0];
+    }
+
+    if (typeof project_name === "object") {
+        project_name = project_name[0];
+    }
 
     const result = uploadProject.body.safeParse(req.body);
     
@@ -76,8 +94,12 @@ router.post(
         return res.status(400).json(projectResponse(false, null, "Malformed body"));
     }
 
-    console.log(result);
-
+    const uploadState = Storage.upload_to_project(
+        username,
+        project_name,
+        result.data.blobs,
+        result.data.commit_hash
+    );
     // check that user is = username, and has permissions?
     // sql query for userId, use Token to get userId.
 

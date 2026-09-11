@@ -4,9 +4,10 @@
   "description": "bridge between Saver & Saver Web",
   "main": "main.js",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js",
-    "compile": "tsc"
+    "compile": "tsc -w",
+    "hmr": "concurrently \"npm:compile\" \"npm:start\"",
+    "dev": "nodemon --watch src -e ts --exec tsx src/main.ts"
   },
   "author": "Realmaacke",
   "license": "ISC",
@@ -19,6 +20,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.3.0",
     "@types/pg": "^8.23.1",
+    "concurrently": "^10.0.5",
+    "nodemon": "^3.1.14",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },

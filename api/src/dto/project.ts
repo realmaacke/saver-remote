@@ -32,3 +32,13 @@ export const uploadProject = {
         }))
     })
 }
+
+export interface BlobObject {
+    hash: string,
+    mode: string | null,
+    content: string
+};
+
+export interface TreeInterface {
+    commit_hash: string
+};

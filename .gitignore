@@ -1,5 +1,6 @@
 .env
 api/node_modules
 api/dist
+api/storage/**
 
 web/node_modules
