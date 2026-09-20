@@ -1,0 +1,83 @@
+/* Colors are eyeballed from the screenshot. Swap in exact values with an eyedropper. */
+.register-page {
+  --register-bg-start: #060b1a;
+  --register-bg-end: #0e1629;
+  --register-card: #1e293b;
+  --register-card-border: #2a374a;
+  --register-input-bg: #0b1220;
+  --register-input-border: #27334a;
+  --register-text: #ffffff;
+  --register-label: #e2e8f0;
+  --register-muted: #94a3b8;
+  --register-placeholder: #64748b;
+  --register-primary: #5048e5;
+  --register-primary-hover: #443cd1;
+  --register-link: #6366f1;
+
+  background: linear-gradient(135deg, var(--register-bg-start), var(--register-bg-end));
+  color: var(--register-text);
+}
+
+.register-page .register-card {
+  background-color: var(--register-card);
+  border: 1px solid var(--register-card-border);
+  border-radius: 0.125rem;
+  box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
+}
+
+.register-page .register-label {
+  color: var(--register-label);
+}
+
+.register-page .register-input {
+  background-color: var(--register-input-bg);
+  border: 1px solid var(--register-input-border);
+  border-radius: 0.125rem;
+  height: 2.75rem;
+  color: var(--register-text);
+}
+
+.register-page .register-input:focus-within {
+  border-color: var(--register-primary);
+  outline: 1px solid var(--register-primary);
+  outline-offset: 0;
+}
+
+.register-page .register-input input::placeholder {
+  color: var(--register-placeholder);
+}
+
+.register-page .register-toggle {
+  color: var(--register-muted);
+}
+
+.register-page .register-btn {
+  background-color: var(--register-primary);
+  border: 1px solid var(--register-primary);
+  border-radius: 0.125rem;
+  color: var(--register-text);
+  height: 2.75rem;
+  box-shadow: none;
+}
+
+.register-page .register-btn:hover {
+  background-color: var(--register-primary-hover);
+  border-color: var(--register-primary-hover);
+}
+
+.register-page .register-muted {
+  color: var(--register-muted);
+}
+
+.register-page .register-link {
+  color: var(--register-link);
+  text-decoration: none;
+}
+
+.register-page .register-link:hover {
+  text-decoration: underline;
+}
+
+.register-title {
+    color: var(--register-label)
+}

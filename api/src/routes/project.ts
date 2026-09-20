@@ -20,6 +20,7 @@ import { Storage } from "../models/storage";
 
 const router = Router();
 
+
 /**
  * Route name: get_project
  * /project/:username/project_name => Return Project
@@ -73,11 +74,17 @@ router.get(
  * Route name: append_project
  * This route add/alter files to an existing project.
 */
+import { parser } from 'stream-json';
+import { pick } from 'stream-json/filters/pick.js';
+import {streamValues} from "stream-json/streamers/stream-values.js";
+import chain from "stream-chain";
+
 router.post(
     '/upload/:username/:project_name',
     authenticate, validateParams(uploadProject.params),
     async (req: Request, res: Response) => {
     let { username, project_name } = req.params;
+
 
     if (typeof username === "object") {
         username = username[0];
@@ -93,6 +100,17 @@ router.post(
         console.log(result.error);
         return res.status(400).json(projectResponse(false, null, "Malformed body"));
     }
+
+    const commit_hash = result.data.commit_hash;
+    const chapter = result.data.chapter;
+
+    // const pipeline = chain([
+    //     req, parser(),
+    //     pick({ filter: /^data\.blobs\.\d+\.hash$/ }),
+    //     streamValues()
+    // ]);
+    
+    // pipeline.on('data', ({value}) => console.log(value));
 
     const uploadState = await Storage.upload_to_project(
         username,

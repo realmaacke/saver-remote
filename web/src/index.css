@@ -1,8 +1,0 @@
-@import "tailwindcss";
-@source "**/*.tsx";
-@plugin "daisyui";
-
-
-.home-app-base {
-    background-color: red;
-}

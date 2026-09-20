@@ -1,0 +1,83 @@
+/* Colors are eyeballed from the screenshot. Swap in exact values with an eyedropper. */
+.login-page {
+  --login-bg-start: #060b1a;
+  --login-bg-end: #0e1629;
+  --login-card: #1e293b;
+  --login-card-border: #2a374a;
+  --login-input-bg: #0b1220;
+  --login-input-border: #27334a;
+  --login-text: #ffffff;
+  --login-label: #e2e8f0;
+  --login-muted: #94a3b8;
+  --login-placeholder: #64748b;
+  --login-primary: #5048e5;
+  --login-primary-hover: #443cd1;
+  --login-link: #6366f1;
+
+  background: linear-gradient(135deg, var(--login-bg-start), var(--login-bg-end));
+  color: var(--login-text);
+}
+
+.login-page .login-card {
+  background-color: var(--login-card);
+  border: 1px solid var(--login-card-border);
+  border-radius: 0.125rem;
+  box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
+}
+
+.login-page .login-label {
+  color: var(--login-label);
+}
+
+.login-page .login-input {
+  background-color: var(--login-input-bg);
+  border: 1px solid var(--login-input-border);
+  border-radius: 0.125rem;
+  height: 2.75rem;
+  color: var(--login-text);
+}
+
+.login-page .login-input:focus-within {
+  border-color: var(--login-primary);
+  outline: 1px solid var(--login-primary);
+  outline-offset: 0;
+}
+
+.login-page .login-input input::placeholder {
+  color: var(--login-placeholder);
+}
+
+.login-page .login-toggle {
+  color: var(--login-muted);
+}
+
+.login-page .login-btn {
+  background-color: var(--login-primary);
+  border: 1px solid var(--login-primary);
+  border-radius: 0.125rem;
+  color: var(--login-text);
+  height: 2.75rem;
+  box-shadow: none;
+}
+
+.login-page .login-btn:hover {
+  background-color: var(--login-primary-hover);
+  border-color: var(--login-primary-hover);
+}
+
+.login-page .login-muted {
+  color: var(--login-muted);
+}
+
+.login-page .login-link {
+  color: var(--login-link);
+  text-decoration: none;
+}
+
+.login-page .login-link:hover {
+  text-decoration: underline;
+}
+
+.login-title {
+  color: var(--login-label);
+}

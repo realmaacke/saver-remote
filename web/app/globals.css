@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@plugin "flyonui";
+@plugin "@iconify/tailwind4";
+@import "../node_modules/flyonui/variants.css";
+@source "../node_modules/flyonui/dist/index.js";
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --saver-bg-start: #060b1a;
+  --saver-bg-end: #0e1629;
+  --saver-card: #1e293b;
+  --saver-card-border: #2a374a;
+  --saver-input-bg: #0b1220;
+  --saver-input-border: #27334a;
+  --saver-text: #ffffff;
+  --saver-label: #e2e8f0;
+  --saver-muted: #94a3b8;
+  --saver-placeholder: #64748b;
+  --saver-primary: #5048e5;
+  --saver-primary-hover: #443cd1;
+  --saver-link: #6366f1;
+
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

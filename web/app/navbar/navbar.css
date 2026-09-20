@@ -1,0 +1,28 @@
+.app-navbar {
+  background-color: var(--saver-bg-start);
+  border-bottom: 1px solid var(--saver-card-border);
+  color: var(--saver-text);
+  box-shadow: none;
+  min-height: 4rem;
+}
+
+.app-navbar .nav-title {
+  color: var(--saver-text);
+}
+
+.app-navbar .nav-link {
+  color: var(--saver-muted);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.app-navbar .nav-link:hover {
+  background-color: var(--saver-card);
+  color: var(--saver-text);
+}
+
+.app-navbar .nav-avatar {
+  border: 1px solid var(--saver-input-border);
+  border-radius: 9999px;
+}
