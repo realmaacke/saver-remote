@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Project table
 CREATE TABLE IF NOT EXISTS projects (
     project_id SERIAL PRIMARY KEY,
-    project_path VARCHAR(255) UNIQUE NOT NULL
+    project_name VARCHAR(255) NOT NULL
 );
 
 

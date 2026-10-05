@@ -2,7 +2,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import fs from "node:fs";
-import { BlobObject, projectResponse } from "../dto/project";
+import { chunkLine, doneLine, projectResponse, startLine, UploadLine } from "../dto/project";
 import { createHash } from "node:crypto";
 
 export const Storage = {
@@ -37,16 +37,52 @@ export const Storage = {
         await writeFile(file_location, bytes);
     },
 
-    /**
-     * 
-     * @param username  - saver user's username
-     * @param project_name - saver user's project name.
-     * @param data - BlobObject = {hash: string, mode: string | null, content: string}
-     * Content is decoded at first. (base64), if mode is null it is a folder.
-     * @param commit_hash - SHA256 string of commit.
-     * @returns ProjectResponse - { success: boolean, data: any[] | null, message: string }
-     */
-    async upload_to_project(username: string, project_name: string, data: BlobObject[], commit_hash: string) {
+    async upload_to_project_NDJSON(
+        username: string,
+        project_name: string,
+        data: UploadLine[],
+    ) {
+        const base_path = this.get_storage_path(username, project_name, "objects");
+        let start;
+        let done;
+        let chunks: chunkLine[] = [];
+
+        for (const line of data) {
+            if (line.type === 'start') start = line as startLine;
+            if (line.type === 'done') done = line as doneLine;
+
+            if (line.type === 'chunk') {
+                let folder: string = line.hash.substring(0, 2);
+                let fileName: string = line.hash.substring(2);
+                let bytes: Buffer = Buffer.from(line.content, "base64");
+
+                const correct_hash = createHash("sha256").update(bytes).digest("hex");
+
+                if (correct_hash !== line.hash) 
+                    return projectResponse(false, null, `Mismatch hash for File: ${line.hash}`);
+                
+
+                if (fs.existsSync(path.join(base_path, folder, fileName))) continue;
+
+                this.store_file(path.join(base_path, folder), fileName, bytes);
+            }
+        }
+
+        if (start === undefined) return projectResponse(false, null, "start is undefined");
+        if (done === undefined) return projectResponse(false, null, "done is undefined");
+
+        const chapter_upload = await this.store_chapter(start.commit_hash, start.chapter, username, project_name);
+        // store chapter
+        if (!chapter_upload.success) {
+            return projectResponse(false, null, "Could not upload chapter");
+        }
+
+        // return commit hash
+        return projectResponse(true, null, `uploaded commit: ${start.commit_hash}`);
+        
+    },
+
+    async upload_to_project(username: string, project_name: string, data: any[], commit_hash: string) {
         const base_path = this.get_storage_path(username, project_name, "objects");
 
         for (const blob of data) {

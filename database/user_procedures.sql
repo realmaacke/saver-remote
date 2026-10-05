@@ -1,3 +1,4 @@
+DROP FUNCTION IF EXISTS get_specific_user;
 CREATE OR REPLACE FUNCTION get_specific_user(p_username VARCHAR(255))
 RETURNS TABLE (user_id INT, username VARCHAR, token VARCHAR)
 LANGUAGE plpgsql AS $$
@@ -13,7 +14,7 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS get_user_by_id(integer);
+DROP FUNCTION IF EXISTS get_user_by_id;
 CREATE OR REPLACE FUNCTION get_user_by_id(p_user_id INT)
 RETURNS TABLE (user_id INT, username VARCHAR, token VARCHAR)
 LANGUAGE plpgsql AS $$
@@ -28,6 +29,7 @@ BEGIN
             u.user_id = p_user_id;
 END;
 $$;
+DROP FUNCTION IF EXISTS create_user;
 CREATE OR REPLACE FUNCTION create_user(
     p_username VARCHAR(255),
     p_password VARCHAR(255)
@@ -42,6 +44,7 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS get_user_password;
 CREATE OR REPLACE FUNCTION get_user_password(
     p_username VARCHAR(255)
 )

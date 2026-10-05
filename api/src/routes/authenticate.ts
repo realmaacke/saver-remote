@@ -7,7 +7,7 @@ import {
     loginDTO
 } from "../dto/auth";
 import { Auth } from "../models/auth";
-import { database } from "../models/database";
+import { database } from "../models/database/database";
 import { authenticate } from "../middleware/authMiddleware";
 
 const router = Router();
@@ -25,7 +25,7 @@ router.get("/getUserInfo", authenticate, async (req: Request, res: Response) => 
         ));
     }
 
-    const result = await database.getUserById(userId_res.userId);
+    const result = await database.user.getUserById(userId_res.userId);
 
     if (!result.success || !result.data) {
         return res.status(400).json(genericResponse(
@@ -69,7 +69,7 @@ router.post("/connect", async (req: Request, res: Response) => {
     const username = result.data.username;
     const password = result.data.password;
     
-    const connectResult = await database.connectUser(username, password);
+    const connectResult = await database.user.connect(username, password);
     
     if (!connectResult.success) {
         return res.status(400).json(authResponse(null, connectResult.success, connectResult.message));
@@ -100,7 +100,7 @@ router.post('/create', async  (req: Request, res: Response) => {
     }
     const { username, password } = result.data;
 
-    const creationResult = await database.createUser(username, password);
+    const creationResult = await database.user.createUser(username, password);
 
     if (!creationResult.success) {
         return res.status(400).json(authResponse(null, creationResult.success, creationResult.message));

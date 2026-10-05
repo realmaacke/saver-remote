@@ -1,6 +1,6 @@
 "use strict";
 import { Router, Request, Response } from "express";
-
+import  readLine from "node:readline";
 // Validation
 import { validateParams } from "../middleware/validationsMiddleware";
 import { authenticate } from "../middleware/authMiddleware";
@@ -8,18 +8,14 @@ import { authenticate } from "../middleware/authMiddleware";
 //DTO
 import {
 getProjectDTO,
-initProject,
 projectResponse,
-BlobObject,
-uploadProject
+UploadLine,
+uploadSchema,
 } from "../dto/project";
-
-// Models
-import { Decoding } from "../models/decoding";
 import { Storage } from "../models/storage";
+import { asyncHandler } from "../middleware/asyncMiddleware";
 
 const router = Router();
-
 
 /**
  * Route name: get_project
@@ -47,22 +43,6 @@ router.get(
 
     const { username, project_name } = req.params;
 
-    console.log("INIT")
-
-    // if (!result.success) {
-    //     return res.status(400).json(projectResponse(
-    //         false,
-    //         null,
-    //         "Body does not match the schema"
-    //     ));
-    // }
-
-    // check if user is actually username
-
-    // Check if project name is unique.
-
-    // create project && add the files.
-
     return res.status(200).json(projectResponse(
         true,
         null,
@@ -74,71 +54,58 @@ router.get(
  * Route name: append_project
  * This route add/alter files to an existing project.
 */
-import { parser } from 'stream-json';
-import { pick } from 'stream-json/filters/pick.js';
-import {streamValues} from "stream-json/streamers/stream-values.js";
-import chain from "stream-chain";
-
 router.post(
     '/upload/:username/:project_name',
-    authenticate, validateParams(uploadProject.params),
-    async (req: Request, res: Response) => {
+    authenticate, validateParams(uploadSchema.params),
+    asyncHandler(async (req: Request, res: Response) => {
     let { username, project_name } = req.params;
 
+    if (typeof username === "object") username = username[0];
+    if (typeof project_name === "object") project_name = project_name[0];
 
-    if (typeof username === "object") {
-        username = username[0];
-    }
+    // let buffer: string = "";
 
-    if (typeof project_name === "object") {
-        project_name = project_name[0];
-    }
+    const lines: UploadLine[] = [];
 
-    const result = uploadProject.body.safeParse(req.body);
+    const rl = readLine.createInterface({
+        input: req,
+        crlfDelay: Infinity
+    });
     
-    if (!result.success) {
-        console.log(result.error);
-        return res.status(400).json(projectResponse(false, null, "Malformed body"));
+    let lineNumber: number = 0;
+
+    for await (const line of rl) {
+        lineNumber++;
+        const trimmed = line.trim();
+        
+        if (!trimmed) continue;
+
+        let parsed: unknown;
+        
+        try {
+            parsed = JSON.parse(trimmed);
+        } catch {
+            return res.status(400).json(projectResponse(false, null, "Invalid NDJSON format"));
+        }
+
+        console.log(parsed)
+        const result = uploadSchema.schemas.combined.safeParse(parsed);
+
+        if (!result.success) {
+            return res.status(400).json(projectResponse(false, null, "Invalid NDJSON structure"));
+        }
+
+        lines.push(result.data);
     }
 
-    const commit_hash = result.data.commit_hash;
-    const chapter = result.data.chapter;
+    const storage_res =  await Storage.upload_to_project_NDJSON(username, project_name, lines);
 
-    // const pipeline = chain([
-    //     req, parser(),
-    //     pick({ filter: /^data\.blobs\.\d+\.hash$/ }),
-    //     streamValues()
-    // ]);
-    
-    // pipeline.on('data', ({value}) => console.log(value));
 
-    const uploadState = await Storage.upload_to_project(
-        username,
-        project_name,
-        result.data.blobs,
-        result.data.commit_hash
-    );
-
-    if (!uploadState.success) {
-        return res.status(400).json(uploadState);
+    if (!storage_res.success) {
+        return res.status(400).json(projectResponse(false, null, storage_res.message));
     }
 
-    const chapterState = await Storage.store_chapter(
-        result.data.commit_hash,
-        result.data.chapter,
-        username,
-        project_name
-    );
-    // check that user is = username, and has permissions?
-    // sql query for userId, use Token to get userId.
-
-    // check for changes in remote project.
-    // match and add diff
-
-    // 
-
-    return res.status(200).json(projectResponse(true, null, "Project has been updated"));
-
-});
+    return res.status(200).json(projectResponse(true, null, storage_res.message));
+}));
 
 export default router;

@@ -2,6 +2,20 @@ import Link from 'next/link';
 import './navbar.css';
 import Dropdown from './DropDown';
 
+type User = {
+  isConnected: boolean;
+  username: string;
+  email: string;
+  avatar?: string;
+};
+
+const user1: User = {
+  isConnected: true,
+  username: "Maacke20",
+  email: "marcus-very-long-email@outlook.com",
+  avatar: ''
+};
+
 const links = [
   { href: '/projects', label: 'Projects', icon: <span className="icon-[tabler--library]"></span>},
   { href: '/users', label: 'Users', icon: <span className="icon-[tabler--users-group]"></span>},
@@ -28,7 +42,7 @@ export default function Navbar() {
       </div>
 
       <div className="navbar-end">
-        <Dropdown/>
+        <Dropdown  user={user1}/>
       </div>
     </header>
   );
