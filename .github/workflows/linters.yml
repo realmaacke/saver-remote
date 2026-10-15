@@ -55,4 +55,4 @@ jobs:
       - name: Report with Reviewdog
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: reviewdog -f=rdjsonl -reporter=github-pr-review -filter-mode=nofilter -fail-level=error < rdjson.jsonl
+        run: reviewdog -f=rdjsonl -reporter=github-pr-review -filter-mode=added -fail-level=error < rdjson.jsonl
