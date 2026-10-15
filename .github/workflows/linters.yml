@@ -1,0 +1,39 @@
+name: Automated linters
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  oxlint:
+    
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix: { dir: ["./web", "./api"]}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Packages
+        working-directory: ${{ matrix.dir }}
+        run: npm run ci
+
+      - name: Run Oxlint
+        working-directory: ${{ matrix.dir }}
+        run: npx oxlint --format json > oxlint-report.json
+        continue-on-error: true
+
+      - uses: reviewdog/action-setup@v1.4.0
+        with:
+          reviewdog_version: latest
+          # Optional. [latest,nightly,v.X.Y.Z]
