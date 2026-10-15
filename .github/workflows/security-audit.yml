@@ -35,4 +35,4 @@ jobs:
       # Does not block merge
       - name: Vulnerability Audit Dev depends 
         working-directory: ${{ matrix.dir }}
-        run: npm audit --only=dev --audit-level=critical || true
+        run: npm audit --omit=prod --audit-level=critical || true
