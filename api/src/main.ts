@@ -11,8 +11,6 @@ import authenticate from "./routes/authenticate";
 import project from "./routes/project";
 import { projectResponse } from "./dto/project";
 
-const pipeline_try: number = "hello";
-
 // These routes are not to use express.json()
 const STREAM_ROUTES = [
     "/proj/upload"
