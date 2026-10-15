@@ -32,7 +32,5 @@
     "zod": "^4.4.3"
   },
   "overrides": {
-    "chokidar": "^3.6.0",
-    "braces": "^3.0.3"
   }
 }

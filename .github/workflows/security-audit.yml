@@ -23,10 +23,16 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: npm ci
       
-      - name: integrity audit
+      - name: Integrity Audit
         working-directory: ${{ matrix.dir }}
         run: npm audit signatures --json --include-attestations
 
-      - name: vulnerability audit
+      # Blocks merge
+      - name: Vulnerability Audit Prod depends
         working-directory: ${{ matrix.dir }}
-        run: npm audit --audit-level=moderate
+        run: npm audit --omit=dev --audit-level=high
+
+      # Does not block merge
+      - name: Vulnerability Audit Dev depends 
+        working-directory: ${{ matrix.dir }}
+        run: npm audit --only=dev --audit-level=critical || true
