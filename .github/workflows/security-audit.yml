@@ -25,7 +25,7 @@ jobs:
       
       - name: Integrity Audit
         working-directory: ${{ matrix.dir }}
-        run: npm audit signatures --json --include-attestations
+        run: npm audit signatures --json
 
       # Blocks merge
       - name: Vulnerability Audit Prod depends
