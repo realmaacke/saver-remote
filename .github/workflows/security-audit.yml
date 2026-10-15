@@ -8,7 +8,7 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     strategy:
-      matrix: { dir: ["./api", "./web" ]}
+      matrix: { dir: ["api", "web" ]}
 
     steps:
       - name: Checkout
@@ -20,19 +20,19 @@ jobs:
           node-version: '24'
 
       - name: Install packages
-        working-directory: ${{ matrix.dir }}
+        working-directory: ./${{ matrix.dir }}
         run: npm ci
       
       - name: Integrity Audit
-        working-directory: ${{ matrix.dir }}
+        working-directory: ./${{ matrix.dir }}
         run: npm audit signatures --json
 
       # Blocks merge
       - name: Vulnerability Audit Prod depends
-        working-directory: ${{ matrix.dir }}
+        working-directory: ./${{ matrix.dir }}
         run: npm audit --omit=dev --audit-level=high
 
       # Does not block merge
       - name: Vulnerability Audit Dev depends 
-        working-directory: ${{ matrix.dir }}
+        working-directory: ./${{ matrix.dir }}
         run: npm audit --environment=dev --audit-level=critical || true
