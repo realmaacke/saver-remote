@@ -32,6 +32,9 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
 
+          WEB_PORT: ${{ vars.WEB_PORT }}
+          WEB_HOSTNAME: ${{ vars.WEB_HOSTNAME }}
+
           API_DB_PORT: ${{ vars.API_DB_PORT }}
           API_PORT: ${{ vars.API_PORT }}
           PGADMIN_PORT: ${{ vars.PGADMIN_PORT }}

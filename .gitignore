@@ -4,3 +4,6 @@ api/dist
 api/storage/**
 
 web/node_modules
+
+web/.next
+web/next-env.d.ts
