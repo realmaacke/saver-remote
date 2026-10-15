@@ -1,0 +1,28 @@
+name: NPM security audit
+
+on:
+  pull_request:
+    branches: [ "main"]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: { dir: ["./api", "./web" ]}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      
+      - name: integrity audit
+        working-directory: ${{ matrix.dir }}
+        run: npm audit signatures --json --include-attestations
+
+      - name: vulnerability audit
+        working-directory: ${{ matrix.dir }}
+        run: npm audit --audit-level=moderate

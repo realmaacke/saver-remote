@@ -11,7 +11,7 @@
   "author": "Realmaacke",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.29.7",
+    "@babel/cli": "^8.0.6",
     "@babel/core": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
@@ -19,8 +19,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.3.0",
     "@types/pg": "^8.23.1",
-    "concurrently": "^10.0.5",
-    "nodemon": "^3.1.14",
+    "eslint": "^9.39.5",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },
