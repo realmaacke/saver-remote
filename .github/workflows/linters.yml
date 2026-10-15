@@ -33,10 +33,17 @@ jobs:
         working-directory: ./${{ matrix.dir }}
         run: npm ci
 
-      - name: Run oxlint with reviewdog
+      - name: Run oxlint
         working-directory: ./${{ matrix.dir }}
+        run: npx oxlint --format json > oxlint.json || true
+
+      - name: Convert to rdjsonl
+        run: >-
+          jq -c --arg dir "${{ matrix.dir }}" '.[] |
+          .filename as $f | .diagnostics[] |
+          {message: .message, location: {path: ($dir + "/" + $f), range: {start: {line: .labels[0].span.offset, column: 1}}}, severity: "ERROR"}' ./${{ matrix.dir }}/oxlint.json > rdjson.jsonl
+
+      - name: Report with Reviewdog
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >-
-          npx oxlint --format checkstyle |
-          reviewdog -f=checkstyle -reporter=github-pr-review -filter-mode=nofilter -fail-level=error -path-prefix=${{ matrix.dir }}
+        run: reviewdog -f=rdjsonl -reporter=github-pr-review -filter-mode=nofilter -fail-level=error < rdjson.jsonl
