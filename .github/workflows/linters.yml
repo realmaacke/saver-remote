@@ -37,11 +37,20 @@ jobs:
         working-directory: ./${{ matrix.dir }}
         run: npx oxlint --format json > oxlint.json || true
 
-      - name: Convert to rdjsonl
+      - name: Convert oxlint JSON to rdjsonl
         run: >-
-          jq -c --arg dir "${{ matrix.dir }}" '.[] |
-          .filename as $f | .diagnostics[] |
-          {message: .message, location: {path: ($dir + "/" + $f), range: {start: {line: .labels[0].span.offset, column: 1}}}, severity: "ERROR"}' ./${{ matrix.dir }}/oxlint.json > rdjson.jsonl
+          jq -c --arg dir "${{ matrix.dir }}" '
+          .diagnostics[]? | {
+          message: .message,
+          location: {path: ($dir + "/" + .filename),
+            range: {
+              start: {
+                line: (.labels[0]?.span?.line // 1),
+                column: (.labels[0]?.span?.column // 1)
+              }
+            }
+          },
+          severity: (if .severity == "error" then "ERROR" else "WARNING" end)}' ./${{ matrix.dir }}/oxlint.json > rdjson.jsonl
 
       - name: Report with Reviewdog
         env:
