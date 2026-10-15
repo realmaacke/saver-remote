@@ -52,7 +52,25 @@ jobs:
           },
           severity: (if .severity == "error" then "ERROR" else "WARNING" end)}' ./${{ matrix.dir }}/oxlint.json > rdjson.jsonl
 
+      - name: Check if linting passed
+        id: check_lint
+        run: |
+          if [ ! -s rdjson.jsonl ]; then
+            echo "clean=true" >> $GITHUB_OUTPUT
+          else
+            echo "clean=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post success comment
+        if: steps.check_lint.outputs.clean == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            LGTM (${{ matrix.dir }})
+
       - name: Report with Reviewdog
+        if: steps.check_lint.outputs.clean == 'false'
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: reviewdog -f=rdjsonl -reporter=github-pr-review -filter-mode=added -fail-level=error < rdjson.jsonl
