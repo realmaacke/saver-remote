@@ -11,7 +11,6 @@
   "author": "Realmaacke",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^8.0.6",
     "@babel/core": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
@@ -31,5 +30,9 @@
     "pg": "^8.23.0",
     "stream-json": "^3.6.0",
     "zod": "^4.4.3"
+  },
+  "overrides": {
+    "chokidar": "^3.6.0",
+    "braces": "^3.0.3"
   }
 }
