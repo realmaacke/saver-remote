@@ -1,0 +1,58 @@
+name: Automated linters
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  oxlint:
+    
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix: { dir: ["web", "api"]}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Setup Reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Install Packages
+        working-directory: ./${{ matrix.dir }}
+        run: npm ci
+
+      - name: Run oxlint
+        working-directory: ./${{ matrix.dir }}
+        run: npx oxlint --format json > oxlint.json || true
+
+      - name: Convert oxlint JSON to rdjsonl
+        run: >-
+          jq -c --arg dir "${{ matrix.dir }}" '
+          .diagnostics[]? | {
+          message: .message,
+          location: {path: ($dir + "/" + .filename),
+            range: {
+              start: {
+                line: (.labels[0]?.span?.line // 1),
+                column: (.labels[0]?.span?.column // 1)
+              }
+            }
+          },
+          severity: (if .severity == "error" then "ERROR" else "WARNING" end)}' ./${{ matrix.dir }}/oxlint.json > rdjson.jsonl
+        
+      - name: Report with Reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: reviewdog -f=rdjsonl -reporter=github-pr-review -filter-mode=added -fail-level=error < rdjson.jsonl
