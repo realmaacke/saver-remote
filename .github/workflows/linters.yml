@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Packages
         working-directory: ${{ matrix.dir }}
-        run: npm run ci
+        run: npm ci
 
       - name: Run Oxlint
         working-directory: ${{ matrix.dir }}
