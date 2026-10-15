@@ -64,6 +64,8 @@ jobs:
           else
             echo "has_findings=false" >> "$GITHUB_OUTPUT"
           fi
+
+          || true
         
       - name: Report with Reviewdog
         env:
