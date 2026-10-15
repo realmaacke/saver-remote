@@ -5,8 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node dist/main.js",
-    "compile": "tsc -w",
-    "hmr": "concurrently \"npm:compile\" \"npm:start\"",
+    "build": "tsc",
     "dev": "nodemon --watch src -e ts --exec tsx src/main.ts"
   },
   "author": "Realmaacke",

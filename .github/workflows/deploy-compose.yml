@@ -1,0 +1,38 @@
+name: Deploy Stack
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment: Remote
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Docker Compose
+        env:
+          API_DB_HOST: ${{ secrets.API_DB_HOST }}
+          API_DB_NAME: ${{ secrets.API_DB_NAME }}
+          API_DB_PASSWORD: ${{ secrets.API_DB_PASSWORD }}
+          API_DB_USER: ${{ secrets.API_DB_USER }}
+          PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
+          PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+
+          API_DB_PORT: ${{ vars.API_DB_PORT }}
+          API_PORT: ${{ vars.API_PORT }}
+          PGADMIN_PORT: ${{ vars.PGADMIN_PORT }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+        run: |
+          docker compose up -d --build

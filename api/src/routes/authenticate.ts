@@ -35,19 +35,29 @@ router.get("/getUserInfo", authenticate, async (req: Request, res: Response) => 
         ));
     }
 
-    return res.status(200).json({
-        userId: result.data.user_id,
-        username: result.data.username,
-        success: result.success,
-        message: result.message
-    });
+    return res.status(200).json(genericResponse(
+        {
+            user_id: result.data.user_id,
+            username: result.data.username,
+            token: result.data.token
+        },
+        true,
+        "Retrived user"
+    ));
 });
 
 // Used to renew token.
 router.get("/renew", authenticate, (req : Request, res: Response) => {
+    console.log("HERE");
     // It will never be empty since authenticate is middleware.
     const authHeader = req.get("Authorization") || "";
-    return res.status(200).json(Auth.renew_token(authHeader));
+
+    const x = Auth.renew_token(authHeader);
+    console.log(x);
+
+
+    return res.status(200).json(x);
+    // return res.status(200).json(Auth.renew_token(authHeader));
 
     // TODO:: Fix auth
     // Vulnerable to XSS right now in regards to the tokens.

@@ -43,6 +43,15 @@ router.get(
 
     const { username, project_name } = req.params;
 
+    console.log(username);
+    console.log(project_name);
+
+    if (Math.random() === 0) {
+        return res.status(400).json(projectResponse(
+            false, null, "name is taken"
+        ));
+    }
+
     return res.status(200).json(projectResponse(
         true,
         null,

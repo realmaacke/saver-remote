@@ -1,8 +1,4 @@
 "use strict";
-
-import { BlobObject } from "../dto/project";
-
-
 export const Decoding = {
     base64_to_string(data: string) {
         let buffer = Buffer.from(data, 'base64');

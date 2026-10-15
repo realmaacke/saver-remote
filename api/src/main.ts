@@ -1,7 +1,10 @@
 import express, { NextFunction, Request, Response } from "express";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const app = express();
-const port = 8080; // change to env.
+const port = process.env.API_PORT || 8080;
 
 // Routers
 import authenticate from "./routes/authenticate";

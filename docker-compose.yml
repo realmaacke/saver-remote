@@ -28,3 +28,21 @@ services:
     volumes:
       - pgadmin_storage:/var/lib/pgadmin
     restart: unless-stopped
+  
+  api:
+    container_name: api
+    build:
+      context: api
+      dockerfile: Dockerfile
+    
+    environment:
+      API_DB_PORT: "${API_DB_PORT}"
+      API_DB_HOST: "${API_DB_HOST}"
+      API_DB_USER: "${API_DB_USER}"
+      API_DB_PASSWORD: "${API_DB_PASSWORD}"
+      API_DB_NAME: "${API_DB_NAME}"
+    depends_on:
+      - database
+    ports:
+      - "${API_PORT:-8080}:8080"
+    restart: unless-stopped    
