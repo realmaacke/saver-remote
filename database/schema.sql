@@ -2,8 +2,7 @@
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    token VARCHAR(255)
+    password VARCHAR(255) NOT NULL
 );
 -- Project table
 CREATE TABLE IF NOT EXISTS projects (
@@ -21,3 +20,14 @@ CREATE TABLE IF NOT EXISTS users_to_projects (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS users_to_token (
+    token VARCHAR(255) PRIMARY KEY,
+    user_id INT NOT NULL,
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_renewed TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_to_token_user_id ON users_to_token(user_id);
