@@ -1,6 +1,5 @@
 .env
-api/node_modules
-api/dist
-api/storage/**
+api/.gradle
+api/build
 
 web/node_modules
