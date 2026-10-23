@@ -27,9 +27,6 @@ public class AuthController {
     @RequiresAuth
     @RequestMapping(value = "/auth/token/renew", method = {RequestMethod.GET})
     public ResponseEntity<GenericResponse> RenewToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-
-        
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new GenericResponse(authHeader, true, "Token renewed"));
