@@ -1,52 +1,28 @@
-## Docummentation for API
-
-## Authentication (/auth)
-### GET /auth/renew
-```
-params: None
-body: None
-headers: Authorization: "Bearer jwt-here"
-response: { token: str|null, success: bool, message: str}
-```
-
-### POST /auth/connect
-```
-params: None
-body: {username: string, password: string}
-headers: None
-response: { token: str|null, success: bool, message: str}
-```
-
-### POST /auth/create
-```
-params: None
-body: {username: string, password: string}
-headers: None
-response: { token: null, success: bool, message: str}
-```
+# Saver-remote
+Requirements:
+- Java 25
+- Just
+- Docker
 
 
-## Project (/proj)
-### GET /proj/:username/:project_name
-```
-params: username: string, project_name: string
-body: None
-headers: Authorization
-response: None
-```
+## API
+### Routes
+Routes will be available in the project wiki when done.
+### Specs:
+- Language: Java 25
+- Framework: SpringBoot
+- Build system: Gradle
+- Database connection: ORM (Jpa)
+- Linter: checkStyle
+    - uses Google config that has been altered after what i see fit.
+## Database
+### Specs:
+- DB: PostgreSQL
+- DB interface: PGAdmin
 
-### POST /proj/:username/:project_name
-```
-params: username: string, project_name: string
-body: data: any[]|null
-headers: Authorization
-response {success: boolean, data: any[]|null, message:string}
-```
+## Ops
+### Commands
+Pre-defined commands are available inside the justfile in project root.
 
-### POST /proj/add/:username/:project_name
-```
-params: username: string, project_name: string
-body: data: any[]|null
-headers: Authorization
-response {success: boolean, data: any[]|null, message:string}
-```
+### CI/CD
+All workflows needs to pass in order for the pr to merge.

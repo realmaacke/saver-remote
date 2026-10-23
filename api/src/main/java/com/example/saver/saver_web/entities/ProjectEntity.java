@@ -7,10 +7,13 @@ import jakarta.persistence.*;
 public class ProjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "project_id")
     private Long id;
 
-    @Column(nullable = false, unique = false)
+    @Column(name = "project_name", nullable = false)
     private String projectName;
+
+    protected ProjectEntity() {}
 
     public ProjectEntity(String projectName) {
         this.projectName = projectName;

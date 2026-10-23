@@ -2,19 +2,14 @@ package com.example.saver.saver_web.controllers;
 
 import com.example.saver.saver_web.annotations.RequiresAuth;
 import com.example.saver.saver_web.dto.UserDTO;
-import com.example.saver.saver_web.entities.UserEntity;
 import com.example.saver.saver_web.models.RequestModels;
 import com.example.saver.saver_web.models.ResponseModels.GenericResponse;
 import com.example.saver.saver_web.services.AuthService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-
 
 @RestController
 public class AuthController {
@@ -24,6 +19,13 @@ public class AuthController {
         this.authService = authService;
     }
 
+    /**
+     * @Author marcus
+     * @Description //TODO
+     * @Date 2026-10-23 18:12
+     * @Params [authHeader]
+     * @return GenericResponse>
+     **/
     @RequiresAuth
     @RequestMapping(value = "/auth/token/renew", method = {RequestMethod.GET})
     public ResponseEntity<GenericResponse> RenewToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -32,8 +34,15 @@ public class AuthController {
                 .body(new GenericResponse(authHeader, true, "Token renewed"));
     }
 
+    /**
+     * @Author marcus
+     * @Description //TODO
+     * @Date 2026-10-23 18:13
+     * @Params [body]
+     * @return GenericResponse>
+     **/
     @RequestMapping(value = "/auth/connect", method = {RequestMethod.POST})
-    public ResponseEntity<GenericResponse> ConnectUser(@Valid @RequestBody RequestModels.Auth.connectUser body) {
+    public ResponseEntity<GenericResponse> ConnectUser(@Valid @RequestBody RequestModels.Auth.ConnectUser body) {
         String token = authService.connectUser(body.username(), body.password());
         if (token == null) {
             return ResponseEntity
@@ -46,8 +55,15 @@ public class AuthController {
                 .body(new GenericResponse(token, true, "Successfully connected"));
     }
 
+    /**
+     * @Author marcus
+     * @Description //TODO
+     * @Date 2026-10-23 18:13
+     * @Params [body]
+     * @return GenericResponse>
+     **/
     @RequestMapping(value = "/auth/create-account", method = {RequestMethod.POST})
-    public ResponseEntity<GenericResponse> CreateAccount(@Valid @RequestBody RequestModels.Auth.createUser body) {
+    public ResponseEntity<GenericResponse> CreateAccount(@Valid @RequestBody RequestModels.Auth.CreateUser body) {
         if (!authService.validPassword(body.password())) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

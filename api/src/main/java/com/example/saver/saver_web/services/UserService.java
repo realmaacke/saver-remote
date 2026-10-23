@@ -1,7 +1,10 @@
 package com.example.saver.saver_web.services;
 
+import com.example.saver.saver_web.entities.UserEntity;
 import com.example.saver.saver_web.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -11,4 +14,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public Long getUserIdByUsername(String username) {
+        Optional<UserEntity> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isEmpty()) return null;
+
+        UserEntity user = userOpt.get();
+
+        return user.getId();
+    }
 }

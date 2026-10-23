@@ -49,3 +49,9 @@ status service="all":
         esac
         printf "%-14s status: %s%-10s%s port: %s\n" "$name" "$c" "$label" "$N" "${port:--}"
     done <<< "$rows"
+
+lint-api:
+    #!/usr/bin/env bash
+    cd ./api
+    ./gradlew checkstyleMain --rerun 2>&1 | \
+    grep --color=never -oP '(?<=com/example/saver/).*' || true
