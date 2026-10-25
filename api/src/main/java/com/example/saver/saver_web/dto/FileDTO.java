@@ -4,3 +4,4 @@ public record FileDTO(
     String hash,
     byte[] content
 ) {}
+

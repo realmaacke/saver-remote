@@ -1,9 +1,5 @@
 # Saver-remote
-Requirements:
-- Java 25
-- Just
-- Docker
-
+Docs for API is found at endpoint: /swagger-ui/index.html
 
 ## API
 ### Routes
@@ -13,6 +9,7 @@ Routes will be available in the project wiki when done.
 - Framework: SpringBoot
 - Build system: Gradle
 - Database connection: ORM (Jpa)
+- Docs: Swagger UI
 - Linter: checkStyle
     - uses Google config that has been altered after what i see fit.
 ## Database

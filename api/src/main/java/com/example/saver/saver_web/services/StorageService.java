@@ -69,7 +69,7 @@ public class StorageService {
             String fileName,
             byte[] content
     ) throws IOException {
-        Path combined = this.root.resolve(username).resolve(projectName).resolve("./saver");
+        Path combined = this.root.resolve(username).resolve(projectName).resolve(".saver");
 
         for (String dir : subDirs) {
             combined = combined.resolve(dir);
@@ -92,5 +92,73 @@ public class StorageService {
         Files.write(file, content);
 
         return file;
+    }
+
+    public void StoreChapter(
+        String username,
+        String projectName,
+        String latestDescribe,
+        String chapter
+    ) throws IOException {
+        Path root = this.root
+                .resolve(username)
+                .resolve(projectName)
+                .resolve(".saver");
+        root = root.normalize();
+
+        Path heads = root.resolve("refs").resolve("heads");
+        heads = heads.normalize();
+
+        Path chapterFile = heads.resolve(chapter);
+        chapterFile = chapterFile.normalize();
+
+        Files.createDirectories(root);
+        Files.createDirectories(heads);
+
+        Path HEAD = root.resolve("HEAD");
+        HEAD = HEAD.normalize();
+
+        String headContent = "ref: refs/heads/" + chapter;
+        if (!Files.exists(HEAD)) {
+            Files.writeString(HEAD, headContent);
+        }
+
+        Files.writeString(chapterFile, latestDescribe);
+
+    }
+
+    public String GetLatestHead(
+            String username,
+            String projectName
+    ) throws IOException {
+        Path projectDirectory = this.root.resolve(username).resolve(projectName);
+
+        Path headFile = projectDirectory.resolve(".saver").resolve("HEAD").normalize();
+
+        System.out.println("root: " + this.root);
+        if (!headFile.startsWith(this.root) || !Files.exists(headFile)) {
+            System.out.println("headfile: " + headFile);
+            throw new IllegalArgumentException("Invalid path or file does not exist");
+        }
+
+        String ctx = Files.readString(headFile);
+        String chapter = ctx.substring(ctx.lastIndexOf("/") + 1).trim();
+
+        if (chapter.isEmpty()) return "";
+
+        Path chapterFile = projectDirectory
+                .resolve(".saver").resolve("refs")
+                .resolve("heads").resolve(chapter).normalize();
+
+        if (!chapterFile.startsWith(this.root)) {
+            throw new IllegalArgumentException("Invalid path for head");
+        }
+
+        if (!Files.exists(chapterFile)) {
+            throw new IllegalArgumentException("head does not exist");
+        }
+
+        String hash = Files.readString(chapterFile);
+        return hash.trim();
     }
 }

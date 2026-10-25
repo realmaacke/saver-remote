@@ -23,4 +23,10 @@ public class UserService {
 
         return user.getId();
     }
+
+    public UserEntity getUserByToken(String token) {
+        if (token == null || token.isBlank()) return null;
+        Optional<UserEntity> userOpt = userRepository.findByTokens_Token(token);
+        return userOpt.orElse(null);
+    }
 }

@@ -46,7 +46,7 @@ public class RequestModels {
     public static class Project {
         public static class Upload {
             public record StartLine(
-                    @NotNull @JsonProperty("commit_hash") String commitHash,
+                    @NotNull @JsonProperty("describe") String describe,
                     @NotNull String chapter
             ) implements UploadLine {}
 

@@ -2,5 +2,6 @@
 api/.gradle
 api/build
 api/.idea
+api/data/**
 
 web/node_modules

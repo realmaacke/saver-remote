@@ -2,9 +2,11 @@ package com.example.saver.saver_web.services;
 
 import com.example.saver.saver_web.dto.UserDTO;
 import com.example.saver.saver_web.entities.UserEntity;
+import com.example.saver.saver_web.entities.UsersToTokenEntity;
 import com.example.saver.saver_web.models.RequestModels;
 import com.example.saver.saver_web.models.ResponseModels;
 import com.example.saver.saver_web.repositories.UserRepository;
+import com.example.saver.saver_web.repositories.UserToTokenRepository;
 import org.springframework.stereotype.Service;
 
 import de.mkammerer.argon2.Argon2;
@@ -17,15 +19,20 @@ import java.util.regex.Pattern;
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final UserToTokenRepository userToTokenRepository;
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{3,16}$");
 
     private final Argon2 argon = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
 
-    public AuthService(UserRepository userRepository, JwtService jwtService) {
-
+    public AuthService(
+            UserRepository userRepository,
+            JwtService jwtService,
+            UserToTokenRepository userToTokenRepository
+    ) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.userToTokenRepository = userToTokenRepository;
     }
 
     public String connectUser(String username, String password) {
@@ -42,8 +49,10 @@ public class AuthService {
         } finally {
             argon.wipeArray(passwordChars);
         }
+        String token = jwtService.userToToken(user);
+        userToTokenRepository.save(new UsersToTokenEntity(token, user.getId()));
 
-        return jwtService.userToToken(user);
+        return token;
     }
 
     public UserDTO createUser(String username, String password) {

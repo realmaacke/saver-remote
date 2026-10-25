@@ -27,6 +27,12 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private Set<ProjectEntity> projects = new HashSet<>();
 
+    @OneToMany
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private Set<UsersToTokenEntity> tokens = new HashSet<>();
+
+    public Set<UsersToTokenEntity> getTokens() { return tokens; }
+
     protected UserEntity() {}
 
     public UserEntity(String username, String password) {

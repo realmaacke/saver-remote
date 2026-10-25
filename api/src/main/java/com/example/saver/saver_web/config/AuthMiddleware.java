@@ -42,6 +42,7 @@ public class AuthMiddleware implements HandlerInterceptor {
 
         if (authHeader == null || !authHeader.startsWith(bearerPrefix)) {
             sendUnauthorizedResponse(res, "Missing or malformed bearer token");
+            return false;
         }
 
         String token = authHeader.substring(bearerPrefix.length()).trim();
